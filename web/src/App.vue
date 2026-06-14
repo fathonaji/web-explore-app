@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import ExplorerLayout from './features/explorer/components/ExplorerLayout.vue'
 </script>
 
 <template>
-  <HelloWorld />
+  <ExplorerLayout />
 </template>
