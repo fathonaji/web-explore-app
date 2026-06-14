@@ -1,14 +1,13 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
+import { env } from '../config/env'
 import * as schema from './schema'
 
-const databaseUrl = process.env.DATABASE_URL
-
-if (!databaseUrl) {
+if (!env.databaseUrl) {
   throw new Error('DATABASE_URL is required')
 }
 
-const queryClient = postgres(databaseUrl, {
+const queryClient = postgres(env.databaseUrl, {
   max: 10,
 })
 
