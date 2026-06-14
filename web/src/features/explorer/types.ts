@@ -25,6 +25,19 @@ export interface FolderChildren {
   files: FileListItem[]
 }
 
+export interface FolderSearchResult extends FolderListItem {
+  path: string
+}
+
+export interface FileSearchResult extends FileListItem {
+  path: string
+}
+
+export interface ExplorerSearchResult {
+  folders: FolderSearchResult[]
+  files: FileSearchResult[]
+}
+
 export interface ApiEnvelope<TData> {
   data: TData
 }

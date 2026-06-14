@@ -12,14 +12,32 @@ const explorer = useExplorer()
       <div>
         <h1>Windows Explorer</h1>
       </div>
-      <button
-        class="toolbar-button"
-        type="button"
-        :disabled="explorer.isTreeLoading.value"
-        @click="explorer.loadFolderTree"
-      >
-        Refresh
-      </button>
+      <div class="toolbar-actions">
+        <label class="search-field">
+          <span class="visually-hidden">Search folders and files</span>
+          <input
+            v-model="explorer.searchQuery.value"
+            type="search"
+            placeholder="Search folders and files"
+          />
+        </label>
+        <button
+          v-if="explorer.searchQuery.value"
+          class="toolbar-button"
+          type="button"
+          @click="explorer.clearSearch"
+        >
+          Clear
+        </button>
+        <button
+          class="toolbar-button"
+          type="button"
+          :disabled="explorer.isTreeLoading.value"
+          @click="explorer.loadFolderTree"
+        >
+          Refresh
+        </button>
+      </div>
     </header>
 
     <section class="explorer-panels" aria-label="Windows Explorer">
@@ -48,6 +66,13 @@ const explorer = useExplorer()
         :is-loading="explorer.isChildrenLoading.value"
         :has-selected-folder="explorer.hasSelectedFolder.value"
         :error-message="explorer.childrenStatus.value === 'error' ? explorer.errorMessage.value : null"
+        :search-query="explorer.searchQuery.value"
+        :search-result="explorer.searchResult.value"
+        :is-search-active="explorer.isSearchActive.value"
+        :is-searching="explorer.isSearching.value"
+        :search-error-message="explorer.searchStatus.value === 'error' ? explorer.errorMessage.value : null"
+        @open-folder="explorer.openFolderFromSearch"
+        @open-file="explorer.openFileFromSearch"
       />
     </section>
   </main>

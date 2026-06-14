@@ -1,6 +1,7 @@
 import type {
   ApiEnvelope,
   ApiErrorEnvelope,
+  ExplorerSearchResult,
   FolderChildren,
   FolderTreeNode,
 } from '../types'
@@ -60,10 +61,12 @@ const request = async <TData>(
 export interface ExplorerApi {
   getFolderTree(options?: { signal?: AbortSignal }): Promise<FolderTreeNode[]>
   getFolderChildren(folderId: string, options?: { signal?: AbortSignal }): Promise<FolderChildren>
+  search(query: string, options?: { signal?: AbortSignal }): Promise<ExplorerSearchResult>
 }
 
 export const explorerApi: ExplorerApi = {
   getFolderTree: (options) => request('/folders/tree', options),
   getFolderChildren: (folderId, options) =>
     request(`/folders/${encodeURIComponent(folderId)}/children`, options),
+  search: (query, options) => request(`/search?q=${encodeURIComponent(query)}`, options),
 }

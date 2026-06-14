@@ -81,6 +81,46 @@ button {
   cursor: not-allowed;
 }
 
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.search-field {
+  width: min(360px, 38vw);
+  min-width: 240px;
+  display: flex;
+}
+
+.search-field input {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 0 12px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+}
+
+.search-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .explorer-panels {
   flex: 1;
   min-height: 0;
@@ -265,6 +305,21 @@ button {
   background: #f8fafc;
 }
 
+.search-table th:first-child,
+.search-table td:first-child {
+  width: 34%;
+}
+
+.search-table th:nth-child(2),
+.search-table td:nth-child(2) {
+  width: 46%;
+}
+
+.search-table th:last-child,
+.search-table td:last-child {
+  width: 20%;
+}
+
 .content-name {
   min-width: 0;
   display: flex;
@@ -273,6 +328,25 @@ button {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.content-link {
+  max-width: 100%;
+  border: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.content-link:hover {
+  color: var(--accent);
 }
 
 .folder-icon,
@@ -345,6 +419,17 @@ button {
   .explorer-toolbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .toolbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .search-field {
+    width: 100%;
+    min-width: 0;
   }
 
   .explorer-panels {

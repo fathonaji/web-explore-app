@@ -1,4 +1,4 @@
-import { asc, eq } from 'drizzle-orm'
+import { asc, eq, ilike } from 'drizzle-orm'
 import type { db } from '../../database/client'
 import { files, folders } from '../../database/schema'
 import type { FileRecord, FolderRecord } from './explorer.model'
@@ -10,6 +10,8 @@ export interface ExplorerRepository {
   findFolderById(folderId: string): Promise<FolderRecord | undefined>
   findDirectSubfolders(folderId: string): Promise<FolderRecord[]>
   findDirectFiles(folderId: string): Promise<FileRecord[]>
+  searchFolders(query: string, limit: number): Promise<FolderRecord[]>
+  searchFiles(query: string, limit: number): Promise<FileRecord[]>
 }
 
 export class DrizzleExplorerRepository implements ExplorerRepository {
@@ -68,5 +70,35 @@ export class DrizzleExplorerRepository implements ExplorerRepository {
       .from(files)
       .where(eq(files.folderId, folderId))
       .orderBy(asc(files.sortOrder), asc(files.name))
+  }
+
+  searchFolders(query: string, limit: number) {
+    return this.database
+      .select({
+        id: folders.id,
+        parentId: folders.parentId,
+        name: folders.name,
+        sortOrder: folders.sortOrder,
+      })
+      .from(folders)
+      .where(ilike(folders.name, `%${query}%`))
+      .orderBy(asc(folders.name))
+      .limit(limit)
+  }
+
+  searchFiles(query: string, limit: number) {
+    return this.database
+      .select({
+        id: files.id,
+        folderId: files.folderId,
+        name: files.name,
+        sizeBytes: files.sizeBytes,
+        mimeType: files.mimeType,
+        sortOrder: files.sortOrder,
+      })
+      .from(files)
+      .where(ilike(files.name, `%${query}%`))
+      .orderBy(asc(files.name))
+      .limit(limit)
   }
 }

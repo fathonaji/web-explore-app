@@ -10,6 +10,8 @@ const createRepository = (
   findFolderById: async () => undefined,
   findDirectSubfolders: async () => [],
   findDirectFiles: async () => [],
+  searchFolders: async () => [],
+  searchFiles: async () => [],
   ...overrides,
 })
 
@@ -100,5 +102,70 @@ describe('ExplorerService', () => {
     const service = new ExplorerService(createRepository())
 
     await expect(service.getFolderChildren('missing')).rejects.toBeInstanceOf(FolderNotFoundError)
+  })
+
+  test('returns folder and file search results with paths', async () => {
+    const service = new ExplorerService(
+      createRepository({
+        findAllFolders: async () => [
+          { id: 'root', parentId: null, name: 'Workspace', sortOrder: 1 },
+          { id: 'projects', parentId: 'root', name: 'Projects', sortOrder: 1 },
+          {
+            id: 'assessment',
+            parentId: 'projects',
+            name: 'Windows Explorer Assessment',
+            sortOrder: 1,
+          },
+        ],
+        searchFolders: async () => [
+          {
+            id: 'assessment',
+            parentId: 'projects',
+            name: 'Windows Explorer Assessment',
+            sortOrder: 1,
+          },
+        ],
+        searchFiles: async () => [
+          {
+            id: 'file',
+            folderId: 'assessment',
+            name: 'assessment-notes.md',
+            sizeBytes: 1024,
+            mimeType: 'text/markdown',
+            sortOrder: 1,
+          },
+        ],
+      }),
+    )
+
+    await expect(service.search('assessment')).resolves.toEqual({
+      folders: [
+        {
+          id: 'assessment',
+          parentId: 'projects',
+          name: 'Windows Explorer Assessment',
+          path: 'Workspace/Projects/Windows Explorer Assessment',
+        },
+      ],
+      files: [
+        {
+          id: 'file',
+          folderId: 'assessment',
+          name: 'assessment-notes.md',
+          sizeBytes: 1024,
+          mimeType: 'text/markdown',
+          path: 'Workspace/Projects/Windows Explorer Assessment/assessment-notes.md',
+        },
+      ],
+    })
+  })
+
+  test('returns empty search results for short query', async () => {
+    const service = new ExplorerService(createRepository())
+
+    await expect(service.search('a')).resolves.toEqual({
+      folders: [],
+      files: [],
+    })
   })
 })

@@ -18,6 +18,9 @@ describe('explorer routes', () => {
       getFolderChildren: async () => {
         throw new Error('not used')
       },
+      search: async () => {
+        throw new Error('not used')
+      },
     })
 
     const response = await app.handle(new Request('http://localhost/api/v1/folders/tree'))
@@ -47,6 +50,9 @@ describe('explorer routes', () => {
         folders: [],
         files: [],
       }),
+      search: async () => {
+        throw new Error('not used')
+      },
     })
 
     const response = await app.handle(
@@ -73,6 +79,9 @@ describe('explorer routes', () => {
       getFolderChildren: async () => {
         throw new FolderNotFoundError(folderId)
       },
+      search: async () => {
+        throw new Error('not used')
+      },
     })
 
     const response = await app.handle(
@@ -86,5 +95,42 @@ describe('explorer routes', () => {
       },
     })
     expect(response.status).toBe(404)
+  })
+
+  test('returns search response', async () => {
+    const app = createExplorerRoutes({
+      getFolderTree: async () => [],
+      getFolderChildren: async () => {
+        throw new Error('not used')
+      },
+      search: async () => ({
+        folders: [
+          {
+            id: folderId,
+            parentId: null,
+            name: 'Workspace',
+            path: 'Workspace',
+          },
+        ],
+        files: [],
+      }),
+    })
+
+    const response = await app.handle(new Request('http://localhost/api/v1/search?q=work'))
+
+    await expect(response.json()).resolves.toEqual({
+      data: {
+        folders: [
+          {
+            id: folderId,
+            parentId: null,
+            name: 'Workspace',
+            path: 'Workspace',
+          },
+        ],
+        files: [],
+      },
+    })
+    expect(response.status).toBe(200)
   })
 })

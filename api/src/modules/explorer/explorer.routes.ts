@@ -2,15 +2,15 @@ import { Elysia, t } from 'elysia'
 import { FolderNotFoundError } from './explorer.model'
 import type { ExplorerService } from './explorer.service'
 
-type ExplorerRouteService = Pick<ExplorerService, 'getFolderTree' | 'getFolderChildren'>
+type ExplorerRouteService = Pick<ExplorerService, 'getFolderTree' | 'getFolderChildren' | 'search'>
 
 export const createExplorerRoutes = (explorerService: ExplorerRouteService) =>
-  new Elysia({ prefix: '/api/v1/folders' })
-    .get('/tree', async () => ({
+  new Elysia({ prefix: '/api/v1' })
+    .get('/folders/tree', async () => ({
       data: await explorerService.getFolderTree(),
     }))
     .get(
-      '/:folderId/children',
+      '/folders/:folderId/children',
       async ({ params, set }) => {
         try {
           return {
@@ -34,6 +34,17 @@ export const createExplorerRoutes = (explorerService: ExplorerRouteService) =>
       {
         params: t.Object({
           folderId: t.String({ format: 'uuid' }),
+        }),
+      },
+    )
+    .get(
+      '/search',
+      async ({ query }) => ({
+        data: await explorerService.search(query.q),
+      }),
+      {
+        query: t.Object({
+          q: t.String(),
         }),
       },
     )
