@@ -2,7 +2,9 @@ import { Elysia, t } from 'elysia'
 import { FolderNotFoundError } from './explorer.model'
 import type { ExplorerService } from './explorer.service'
 
-export const createExplorerRoutes = (explorerService: ExplorerService) =>
+type ExplorerRouteService = Pick<ExplorerService, 'getFolderTree' | 'getFolderChildren'>
+
+export const createExplorerRoutes = (explorerService: ExplorerRouteService) =>
   new Elysia({ prefix: '/api/v1/folders' })
     .get('/tree', async () => ({
       data: await explorerService.getFolderTree(),
